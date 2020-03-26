@@ -1,0 +1,49 @@
+- Administrateur (responsable d'équipe) : 
+
+	l'affecter à un ou plusieurs membres de l'équipe
+	=> EVENT "created" 
+	modifier l’événement
+	supprimer un événement
+
+	accès au planning de l'équipe (congé, absence, ...)
+
+
+
+
+
+
+
+
+***************
+	créer un événement
+
+	statut des ventes des billets pour chaque événement
+		nombre de billet au total
+		nombre de place par catégorie (il peut y avoir une seule catégorie et donc un prix unique)
+		prix des places
+		nombre de place vendu
+		total de vente en €
+
+	l’événement change de statut avec
+		-réservation de salle
+		-matériel réservé
+		-régie réservée
+		-présence des invités validé 
+		=> EVENT "terminated"
+
+- Autre :
+	consulter planning des événements
+		statut de vente des billets
+		personnes en charge de l’événement
+
+- Membre de l'équipe : 
+	consulter l'ensemble des événements de l'équipe
+	modifier que ceux qui lui sont affectés
+
+
+ === qml CheatSheet ===
+ # font
+font.capitalization: Font.AllUppercase
+font.pixelSize: 10
+font.weight: Font.Thin
+

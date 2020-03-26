@@ -11,33 +11,33 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
-import sqlite3
+#import sqlite3
 
 class App(QObject):
 
-	def __init__(self):
-		self.events = [
-			{   "id": 0, "name": "bonjour",
-				"date": "21 Sept", "isOver": True,
-				"room": True, "stuff": True,
-				"stewart": True, "guests": True,
-				"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}]
-			}, 
-			{   "id": 1, "name": "au revoir",
-				"date": "27 Oct", "isOver": False,
-				"room": False, "stuff": False,
-				"stewart": True, "guests": True,
-				"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}, {"name": "Zippy"}]
-			}, 
-		]
-		self.currentEvent = 0
+#	def __init__(self):
+	events = [
+		{   "id": 0, "name": "bonjour",
+			"date": "21 Sept", "isOver": True,
+			"room": True, "stuff": True,
+			"stewart": True, "guests": True,
+			"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}]
+		}, 
+		{   "id": 1, "name": "au revoir",
+			"date": "27 Oct", "isOver": False,
+			"room": False, "stuff": False,
+			"stewart": True, "guests": True,
+			"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}, {"name": "Zippy"}]
+		}, 
+	]
+	currentEvent = 0
 
 			# DB
-		self.db = sqlite3.connect('ma_base.db')
-		initDB()
+#		self.db = sqlite3.connect('ma_base.db')
+#		initDB()
 
-	def __del__(self):
-		self.db.close()
+#	def __del__(self):
+#		self.db.close()
 
 
 

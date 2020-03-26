@@ -15,29 +15,29 @@ logging.basicConfig(level=logging.INFO)
 
 class App(QObject):
 
-#	def __init__(self):
-	events = [
-		{   "id": 0, "name": "bonjour",
-			"date": "21 Sept", "isOver": True,
-			"room": True, "stuff": True,
-			"stewart": True, "guests": True,
-			"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}]
-		}, 
-		{   "id": 1, "name": "au revoir",
-			"date": "27 Oct", "isOver": False,
-			"room": False, "stuff": False,
-			"stewart": True, "guests": True,
-			"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}, {"name": "Zippy"}]
-		}, 
-	]
-	currentEvent = 0
+	def __init__(self):
+		events = [
+			{   "id": 0, "name": "bonjour",
+				"date": "21 Sept", "isOver": True,
+				"room": True, "stuff": True,
+				"stewart": True, "guests": True,
+				"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}]
+			},
+			{   "id": 1, "name": "au revoir",
+				"date": "27 Oct", "isOver": False,
+				"room": False, "stuff": False,
+				"stewart": True, "guests": True,
+				"managers": [{"name": "Jean Guy"}, {"name": "Madeleine"}, {"name": "Zippy"}]
+			},
+		]
+		currentEvent = 0
 
-			# DB
-#		self.db = sqlite3.connect('ma_base.db')
-#		initDB()
+			#DB
+		self.db = sqlite3.connect('ma_base.db')
+		initDB()
 
-#	def __del__(self):
-#		self.db.close()
+	def __del__(self):
+		self.db.close()
 
 
 
@@ -46,7 +46,8 @@ class App(QObject):
 		cursor.execute("""
 			CREATE TABLE IF NOT EXISTS users(
 			     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-			     name TEXT,
+			     login TEXT,
+				 password TEXT
 			)
 			""")
 		self.db.commit()
@@ -55,6 +56,16 @@ class App(QObject):
 	@Slot(str, str, result=bool)
 	def login(self, login, passwd):
 		logging.info(f'[LOGIN] from : {login}')
+
+		cursor.execute("""SELECT id FROM users WHERE login = ? AND password = ?""", login, passwd)
+		result = cursor.fetchone()
+
+		if (result):
+			print("[LOGIN] success")
+			# return True
+		else:
+			print("[LOGIN] failure")
+			# return False
 		return True
 
 	@Slot(str)

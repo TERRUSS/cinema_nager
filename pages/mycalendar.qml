@@ -77,7 +77,7 @@ Page {
 			}
 
 			RowLayout {
-				spacing: 100					
+				spacing: 100
 				Button {
 					text: "Annuler"
 					id: editBtn_close

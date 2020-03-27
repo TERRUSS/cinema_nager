@@ -16,6 +16,12 @@ ApplicationWindow {
 	minimumHeight: height
 	minimumWidth: width
 
+	property var user: {"id": undefined, "name": "undefined", "role": "undefined"}
+	function updateInfos() {
+		if(!user.id)
+			user = app.getUserInfo()
+	}
+
 	color: "#101010"
 	
 	visible: true
@@ -42,7 +48,10 @@ ApplicationWindow {
 					verticalAlignment: Image.AlignVCenter
 					source: "./assets/drawer30.png"
 				}
-				onClicked: drawer.open()
+				onClicked: {
+					updateInfos();
+					drawer.open()
+				}
 			}
 
 			Label {
@@ -114,16 +123,17 @@ ApplicationWindow {
 			Label {
 				anchors.topMargin: 30
 				anchors.margins: 12
-				text: app.getUserInfo().name
+				text: user.name
 				anchors.fill: parent
 				font.weight: Font.Light
 				font.pixelSize: 20
+				font.capitalization: Font.Capitalize
 			}
 
 			Label {
 				anchors.topMargin: 70
 				anchors.margins: 12
-				text: "Vous êtes " + app.getUserInfo().role
+				text: "Rôle : " + user.role
 				anchors.fill: parent
 				font.weight: Font.Light
 			}

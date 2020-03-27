@@ -16,14 +16,14 @@ ListView {
 	model: app.getEvents()
 
 		// view init & utils funcs
-	property var currentEvent: {   
+	property var currentEvent: {
 		"id": -1, "name": null,
 		"date": null, "isOver": null,
 		"room": null, "stuff": null,
 		"stewart": null, "guests": null
 	}
 	function updateCurrEvent(id){
-		if (id > -1){   
+		if (id > -1){
 			app.selectEvent(id)
 			currentEvent = app.getCurrentEvent()
 		} else {
@@ -33,6 +33,15 @@ ListView {
 				"room": null, "stuff": null,
 				"stewart": null, "guests": null
 			}
+		}
+	}
+
+	function genEditedEvent(){
+		return {
+			"id": currentEvent.id, "name": edit_name.text,
+			"date": edit_date.text,
+			"room": edit_room.checked, "stuff": edit_stuff.checked,
+			"stewarts": edit_stewart.checked, "guests": edit_guests.checked
 		}
 	}
 
@@ -217,7 +226,7 @@ ListView {
 					id: mainLayout
 					RowLayout {
 						Label { color: "white"; text: "Nom" }
-						TextField { color: "white"; id: field1; Layout.fillWidth: true;
+						TextField { color: "white"; id: edit_name; Layout.fillWidth: true;
 							text: currentEvent.name
 							font.capitalization: Font.Capitalize
 						}
@@ -225,7 +234,7 @@ ListView {
 
 					RowLayout {
 						Label { color: "white"; text: "Date"}
-						TextField { color: "white"; id: field2; Layout.fillWidth: true;
+						TextField { color: "white"; id: edit_date; Layout.fillWidth: true;
 							text: currentEvent.date
 							font.capitalization: Font.Capitalize
 						}
@@ -233,18 +242,22 @@ ListView {
 
 					RowLayout {
 						CheckBox {
+							id: edit_room
 							checked: currentEvent.room
 							text: qsTr("Salle")
 						}
 						CheckBox {
+							id: edit_stuff
 							checked: currentEvent.stuff
 							text: qsTr("Matériel")
 						}
 						CheckBox {
+							id: edit_stewart
 							checked: currentEvent.stewart
 							text: qsTr("Régie")
 						}
 						CheckBox {
+							id: edit_guests
 							checked: currentEvent.guests
 							text: qsTr("Présence des invités")
 						}
@@ -260,6 +273,7 @@ ListView {
 				anchors.bottom: parent.bottom
 				anchors.right: parent.right
 				onClicked: {
+					app.saveEvent( genEditedEvent() )
 					popup.close()
 				}
 			}

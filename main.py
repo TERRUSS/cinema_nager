@@ -81,6 +81,7 @@ class App(QObject):
 				room BOOLEAN,
 				stuff BOOLEAN,
 				stewarts BOOLEAN,
+								guests BOOLEAN,
 				managersIDs TEXT
 			)""")
 		self.db.commit()
@@ -145,8 +146,8 @@ class App(QObject):
 		res = cursor.execute("""SELECT * FROM events""")
 
 		events = []
-		for e in events:
-			events.push({
+		for e in res:
+			events.append({
 				"id": e[0], "isMovie": e[1], "name": e[2],
 				"realisator": e[3], "category": e[4],
 				"date": e[5], "isOver": e[6], "room": e[7],
@@ -154,22 +155,26 @@ class App(QObject):
 			})
 		print(events)
 
-		return self.events
+		return events
 
 	@Slot("QJSValue")
 	def saveEvent(self, newevent):
 		logging.info(f'[EVENTS] Save event')
 		newevent = newevent.toVariant()
 
-		print(newevent)
+		id = newevent.pop('id')
 
-		event_formatted = (v for k, v in newevent.items() if k =! 'id')
+		for k, v in newevent.items():
+				print(f'{k} {v}')
+
+		event_formatted = [v for k, v in newevent.items() if k is not 'id']
+		print(event_formatted)
 		
-		if (newevent['id']<= 0): #if its a ne event
+		if (id<= 0): #if its a ne event
 			cursor = self.db.cursor()
 			cursor.execute("""
 				INSERT INTO events (date, guests, name, room, stewarts, stuff)
-				VALUES(?, ?)""", event_formatted)
+				VALUES(?, ?, ?, ?, ?, ?)""", event_formatted)
 			self.db.commit()
 
 		else:

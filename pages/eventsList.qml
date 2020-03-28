@@ -13,7 +13,11 @@ ListView {
 	add: Transition {
 		NumberAnimation { properties: "x,y"; from: 100; duration: 1000 }
 	}
-	model: app.getEvents()
+	model: events
+
+	Component.onCompleted: {
+		updateEvents()
+	}
 
 		// view init & utils funcs
 	property var currentEvent: {
@@ -34,6 +38,15 @@ ListView {
 				"stewart": null, "guests": null
 			}
 		}
+	}
+	property var events: [{
+			"id": -1, "name": null,
+			"date": null, "isOver": null,
+			"room": null, "stuff": null,
+			"stewart": null, "guests": null
+		}]
+	function updateEvents(){
+		events = app.getEvents()
 	}
 
 	function genEditedEvent(){
@@ -275,6 +288,7 @@ ListView {
 				onClicked: {
 					app.saveEvent( genEditedEvent() )
 					popup.close()
+					updateEvents()
 				}
 			}
 			Button {

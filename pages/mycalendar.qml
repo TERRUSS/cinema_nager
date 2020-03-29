@@ -10,8 +10,13 @@ import QtQuick.Controls.Styles 1.4
 
 Page {
 	background: Rectangle {
-			color: "transparent"
-		}
+		color: "transparent"
+	}
+
+	Component.onCompleted: {
+		updateCalendar()
+	}
+
 	id: calendarPage
 	anchors.fill: parent
 	property var multiSelectArr: [] //where I store the selected date range
@@ -19,6 +24,11 @@ Page {
 
 	function initDayoffs(){
 		multiSelectArr = []
+	}
+
+	function updateCalendar() {
+	    multiSelectArr = app.getDaysOff(-1);
+	    multiSelectArrChanged()
 	}
 
 	Calendar {
@@ -102,6 +112,7 @@ Page {
 						if (selectionStarted){
 							addButton.text = "+"
 							addButton.Material.accent = "#5050ff"
+							app.saveDaysOff( multiSelectArr )
 						}
 						else{
 							addButton.text = "✔"

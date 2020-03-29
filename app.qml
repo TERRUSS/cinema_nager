@@ -9,7 +9,7 @@ import QtQuick.Window 2.12
 
 ApplicationWindow {
 	id: window
-	width: 900
+	width: 1000
 	height: 600
 	maximumHeight: height
 	maximumWidth: width
@@ -18,8 +18,7 @@ ApplicationWindow {
 
 	property var user: {"id": undefined, "name": "undefined", "role": "undefined"}
 	function updateInfos() {
-		if(!user.id)
-			user = app.getUserInfo()
+		user = app.getUserInfo()
 	}
 
 	color: "#101010"
@@ -82,20 +81,6 @@ ApplicationWindow {
 					drawerBtn.visible = false
 					logoutBtn.visible = false
 				}
-				// Menu {
-				//     id: optionsMenu
-				//     x: parent.width - width
-				//     transformOrigin: Menu.TopRight
-
-				//     MenuItem {
-				//         text: "Settings"
-				//         onTriggered: settingsPopup.open()
-				//     }
-				//     MenuItem {
-				//         text: "About"
-				//         onTriggered: aboutDialog.open()
-				//     }
-				// }
 			}
 		}
 	}
@@ -146,6 +131,7 @@ ApplicationWindow {
 			anchors.topMargin: drawerheader.height + 20
 
 			delegate: ItemDelegate {
+				visible: ( user.roleID > model.restrict)
 				width: parent.width
 				text: model.title
 				font.capitalization: Font.AllUppercase
@@ -163,9 +149,10 @@ ApplicationWindow {
 			}
 
 			model: ListModel {
-				ListElement { title: "évènements"; source: "./pages/eventsList.qml" }
-				ListElement { title: "mon calendrier"; source: "./pages/mycalendar.qml" }
-				ListElement { title: "calendrier équipes"; source: "./pages/squad_calendar.qml" }
+				ListElement { title: "évènements"; source: "./pages/eventsList.qml"; restrict: 0 }
+				ListElement { title: "mon calendrier"; source: "./pages/mycalendar.qml"; restrict: 0 }
+				ListElement { title: "calendrier équipes"; source: "./pages/squad_calendar.qml"; restrict: 1 }
+				ListElement { title: "Administration"; source: "./pages/user_managment.qml"; restrict: 2 }
 			}
 
 			ScrollIndicator.vertical: ScrollIndicator { }

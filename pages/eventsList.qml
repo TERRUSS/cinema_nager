@@ -1,8 +1,23 @@
+import QtQuick.Controls 2.12
+
 import QtQuick 2.0
+import QtQuick 2.12
+
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls.Material 2.12
+
+import QtQuick.Controls.Styles 1.4
+
+import QtQuick 2.0
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 1.4
+import QtQuick.Controls 2.12
+import QtQuick.Window 2.12
+import QtQuick.Controls.Material 2.12
+
+import QtQuick.Controls.Styles 1.4
 
 ListView {
 	id: listEvents
@@ -24,18 +39,28 @@ ListView {
 		"id": -1, "name": null,
 		"date": null, "isOver": null,
 		"room": null, "stuff": null,
-		"stewart": null, "guests": null
+		"stewart": null, "guests": null,
+		"managers": [],
+		"realisator": null,
+		"category": null,
+		"price": 0, "places": 0,
+		"sold": 0,
 	}
 	function updateCurrEvent(id){
 		if (id > -1){
 			app.selectEvent(id)
 			currentEvent = app.getCurrentEvent()
 		} else {
-			currentEvent = {   
+			currentEvent = {
 				"id": -1, "name": null,
 				"date": null, "isOver": null,
 				"room": null, "stuff": null,
-				"stewart": null, "guests": null
+				"stewart": null, "guests": null,
+				"managers": [],
+				"realisator": null,
+				"category": null,
+				"price": null, "places": null,
+				"sold": null,
 			}
 		}
 	}
@@ -50,12 +75,26 @@ ListView {
 	}
 
 	function genEditedEvent(){
+
+		console.log(currentEvent.managers)
+
 		return {
 			"id": currentEvent.id, "name": edit_name.text,
-			"date": edit_date.text,
+			"date": currentEvent.date,
 			"room": edit_room.checked, "stuff": edit_stuff.checked,
-			"stewarts": edit_stewart.checked, "guests": edit_guests.checked
+			"stewarts": edit_stewart.checked, "guests": edit_guests.checked,
+			"managers": currentEvent.managers,
+			"realisator": edit_realisator.text,
+			"category": edit_category.text,
+			"price": edit_price.text, "places": edit_places.value,
+			"sold": edit_sold.value,
 		}
+	}
+
+	function dispDate(inputFormat) {
+		function pad(s) { return (s < 10) ? '0' + s : s; }
+		var d = new Date(inputFormat)
+		return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/')
 	}
 
 	delegate: Column {
@@ -68,7 +107,7 @@ ListView {
 
 			Label {
 				id: timestampText
-				text: modelData.date
+				text: dispDate(modelData.date)
 
 				font.capitalization: Font.AllUppercase
 				font.pixelSize: 10
@@ -103,7 +142,7 @@ ListView {
 						font.weight: Font.Thin
 						color:"black"
 						id: filmDatas_name
-						text: modelData.name+"\n"+modelData.name+"real"+"\n"+modelData.name+"categ"
+						text: modelData.name+"\n"+modelData.realisator+"\n"+modelData.category
 						font.capitalization: Font.Capitalize
 						anchors.fill: parent
 						anchors.margins: 12
@@ -129,7 +168,7 @@ ListView {
 					Label {
 						color:"gray"
 						id: filmActions_name
-						text: "ventes\nprix unitaire\ntotal ventes"
+						text: modelData.sold+"/"+modelData.places+"\n"+modelData.price+"\n"+modelData.total+'€'
 						font.capitalization: Font.AllUppercase
 						anchors.fill: parent
 						anchors.margins: 12
@@ -161,6 +200,7 @@ ListView {
 
 						Button {
 							id: editBtn
+							enabled: (app.getUserInfo().roleID == 3 || modelData.managers.indexOf(app.getUserInfo().id) > -1) ? true : false
 							highlighted: true
 							Material.accent: "#ff627c"
 							text: "éditer"
@@ -198,7 +238,7 @@ ListView {
 								y: fileButton.height
 								Repeater {
 									model: modelData.managers
-									MenuItem { text: modelData.name }
+									MenuItem { text: app.getUserName(modelData) }
 								}
 							}
 						}
@@ -211,7 +251,7 @@ ListView {
 	Popup {
 		id: popup
 		width: 600
-		height: 300
+		height: 500
 		x: Math.round((window.width - width) / 2)
 		y: Math.round((window.height - height)/2) - 50
 		modal: true
@@ -233,9 +273,13 @@ ListView {
 			}
 
 			ScrollView {
+				width: 550
+				height: 400
 				anchors.top: popuptitle.bottom
 				clip: true
-					ColumnLayout {
+				
+				ColumnLayout {
+					ScrollBar.vertical: ScrollBar { }
 					id: mainLayout
 					RowLayout {
 						Label { color: "white"; text: "Nom" }
@@ -247,9 +291,76 @@ ListView {
 
 					RowLayout {
 						Label { color: "white"; text: "Date"}
-						TextField { color: "white"; id: edit_date; Layout.fillWidth: true;
-							text: currentEvent.date
+						// TextField { color: "white"; id: edit_date; Layout.fillWidth: true;
+						// 	text: currentEvent.date
+						// 	font.capitalization: Font.Capitalize
+						// }
+						Button {
+							id: toggledatepicker
+							text: currentEvent.date ? dispDate(currentEvent.date) :"Date Picker"
+							visible: true
+							onClicked: {
+								toggledatepicker.visible = false
+								datepicker.visible = true
+							}
+						}
+						Rectangle{
+							id: datepicker
+							visible: false
+							clip: true
+							height: 250
+							width: 300
+							Calendar {
+								id: calendar
+								selectedDate: currentEvent.date ? new Date(currentEvent.date) : new Date()
+								weekNumbersVisible: true
+								onClicked: {
+									currentEvent.date = calendar.selectedDate.getTime()
+									toggledatepicker.visible = true
+									datepicker.visible = false
+								}
+							}
+						}
+
+					}
+
+					RowLayout {
+						Label { color: "white"; text: "Realisateur"}
+						TextField { color: "white"; id: edit_realisator; Layout.fillWidth: true;
+							text: currentEvent.realisator
 							font.capitalization: Font.Capitalize
+						}
+					}
+
+					RowLayout {
+						Label { color: "white"; text: "Catégorie"}
+						TextField { color: "white"; id: edit_category; Layout.fillWidth: true;
+							text: currentEvent.category
+							font.capitalization: Font.Capitalize
+						}
+					}
+
+					RowLayout {
+						Label { color: "white"; text: "Prix unitaire"}
+						TextField { color: "white"; id: edit_price; Layout.fillWidth: true;
+							text: currentEvent.price
+							font.capitalization: Font.Capitalize
+						}
+					}
+
+					RowLayout {
+						Label { color: "white"; text: "Places disponibles"}
+						SpinBox {
+							id: edit_places
+							value: currentEvent.places
+						}
+					}
+
+					RowLayout {
+						Label { color: "white"; text: "Places vendues"}
+						SpinBox {
+							id: edit_sold
+							value: currentEvent.sold
 						}
 					}
 
@@ -275,8 +386,53 @@ ListView {
 							text: qsTr("Présence des invités")
 						}
 					}
-				}
 
+					Item {
+
+							width: 500
+
+						ComboBox {
+							id: comboBox
+							width: 500
+
+							displayText: "Responsables de l'évenement"
+
+							model: app.getUsers()
+
+							// ComboBox closes the popup when its items (anything AbstractButton derivative) are
+							//  activated. Wrapping the delegate into a plain Item prevents that.
+							delegate: Item {
+								width: parent.width
+								height: checkDelegate.height
+
+								function toggle() { checkDelegate.toggle() }
+
+								CheckDelegate {
+									id: checkDelegate
+									anchors.fill: parent
+									text: modelData.name
+									font.capitalization: Font.Capitalize
+									highlighted: comboBox.highlightedIndex == index
+									checked: currentEvent.managers.indexOf(modelData.id) > -1
+									onCheckedChanged: {
+										if (!checkDelegate.checked) {
+											console.log('-')
+											currentEvent.managers.splice(currentEvent.managers.indexOf(modelData.id), 1) 
+										}
+										else {
+											console.log('+')
+											currentEvent.managers.push(modelData.id)
+										}
+										console.log(currentEvent.managers)
+									}
+								}
+							}
+						}
+					}
+					Rectangle{
+						height: 50
+					}
+				}
 			}
 			Button {
 				id: editBtn
@@ -319,8 +475,8 @@ ListView {
 		}
 	}
 
-
 	RoundButton {
+		visible: (app.getUserInfo().roleID == 3) ? true : false
 		id: addButton
 		text: "+" // icon-pencil
 		Material.accent: "#ff5050"
@@ -339,5 +495,4 @@ ListView {
 			popup.open()
 		}
 	}
-
 }

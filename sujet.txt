@@ -1,3 +1,14 @@
+
+TODO :
+	sells:								~2h
+		ticket price
+		SpinBox for ticket number
+	eventlist:							~1h
+		event != movie
+	account manager						~30mn
+
+
+
 - Administrateur (responsable d'équipe) : 
 
 	l'affecter à un ou plusieurs membres de l'équipe
@@ -6,12 +17,6 @@
 	supprimer un événement
 
 	accès au planning de l'équipe (congé, absence, ...)
-
-
-
-
-
-
 
 
 ***************

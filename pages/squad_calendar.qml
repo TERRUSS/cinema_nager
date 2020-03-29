@@ -18,6 +18,11 @@ SplitView {
 		multiSelectArr = []
 	}
 
+	function updateCalendar(id) {
+	    multiSelectArr = app.getDaysOff(id);
+	    multiSelectArrChanged()
+	}
+
 	Calendar {
 		// anchors.fill: parent
 		width: window.width*3/4
@@ -67,35 +72,26 @@ SplitView {
 			font.weight: Font.Thin
 		}
 		ListView {
-		id: listView
-		currentIndex: -1
-		anchors.fill: parent
-		anchors.topMargin: selectioLabel.height + 20
+			id: listView
+			currentIndex: -1
+			anchors.fill: parent
+			anchors.topMargin: selectioLabel.height + 20
 
-		delegate: ItemDelegate {
-			width: parent.width
-			text: model.title
-			font.capitalization: Font.Capitalize
-			font.weight: Font.Thin
-			highlighted: ListView.isCurrentItem
-			onClicked: {
-				if (listView.currentIndex != index) {
-					listView.currentIndex = index
-					titleLabel.text = model.title
-					// content.replace(model.source)
-					content.source = model.source
+			delegate: ItemDelegate {
+				width: parent.width
+				text: modelData.name
+				font.capitalization: Font.Capitalize
+				font.weight: Font.Thin
+				highlighted: ListView.isCurrentItem
+				onClicked: {
+					updateCalendar(modelData.id)
+					drawer.close()
 				}
-				drawer.close()
 			}
-		}
 
-		model: ListModel {
-			ListElement { title: "évènements"; source: "./pages/eventsList.qml" }
-			ListElement { title: "mon calendrier"; source: "./pages/mycalendar.qml" }
-			ListElement { title: "calendrier équipes"; source: "./pages/squad_calendar.qml" }
-		}
+			model: app.getUsers()
 
-		ScrollIndicator.vertical: ScrollIndicator { }
-	}
+			ScrollIndicator.vertical: ScrollIndicator { }
+		}
 	}
 }
